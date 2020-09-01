@@ -21,14 +21,17 @@ const resolvers = {
     status: () => "Servidor rodando",
     clientes: () => Clientes.lista(),
     cliente: (root, { id }) => Clientes.buscaPorId(id),
-    pets: () => Pets.lista()
+    pets: () => Pets.lista(),
+    pet: (root, { id }) => Pets.buscaPorId(id)
   },
 
   Mutation: {
     addCliente: (root, params) => Clientes.adiciona(params),
     updateCliente: (root, params) => Clientes.atualiza(params),
     deleteCliente: (root, { id }) => Clientes.deleta(id),
-    addPet: (root, params) => Pets.adiciona(params)
+    addPet: (root, params) => Pets.adiciona(params),
+    updatePet: (root, params) => Pets.atualiza(params),
+    deletePet: (root, { id }) => Pets.deleta(id)
   }
 }
 
