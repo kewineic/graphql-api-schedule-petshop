@@ -1,10 +1,10 @@
 const executaQuery = require('../database/queries')
 
 class Atendimento {
-  lista(res) {
+  lista() {
     const sql = 'SELECT * FROM Atendimentos'
 
-    executaQuery(res, sql)
+    return executaQuery(sql)
   }
 
   buscaPorId(res, id) {
@@ -13,13 +13,45 @@ class Atendimento {
     executaQuery(res, sql)
   }
 
-  adiciona(res, item) {
-    const { cliente, pet, servico, status, observacoes } = item
+  adiciona(item) {
+    const { clienteId, petId, servicoId, status, observacoes } = item
     const data = new Date().toLocaleDateString()
 
-    const sql = `INSERT INTO Atendimentos(clienteId, petId, servicoId, data, status, observacoes) VALUES(${cliente}, ${pet}, ${servico}, '${data}', '${status}', '${observacoes}')`
+    const sql = `INSERT INTO Atendimentos(
+      clienteId, 
+      petId, 
+      servicoId, 
+      data, 
+      status, 
+      observacoes
+    )VALUES(
+      ${clienteId}, 
+      ${petId}, 
+      ${servicoId}, 
+      '${data}', 
+      '${status}', 
+      '${observacoes}'
+    );
+    SELECT * FROM Clientes WHERE Clientes.id = ${clienteId};
+    SELECT * FROM Pets WHERE Pets.id = ${petId}; 
+    SELECT * FROM Servicos WHERE Servicos.id = ${servicoId}`
 
-    executaQuery(res, sql)
+    return executaQuery(sql).then(res => {
+      const dados = res[0];
+      const cliente = res[1][0];
+      const pet = res[2][0];
+      const servico = res[3][0];
+      
+      return ({
+        id: dados.insertId,
+        cliente,
+        pet,
+        servico,
+        data,
+        status,
+        observacoes
+      });
+    });
   }
 
   atualiza(res, novoItem, id) {
