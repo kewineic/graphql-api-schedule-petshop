@@ -18,12 +18,12 @@ type Mutation{
     nome: 
       String!, 
       cpf: String!
-  ): Cliente!,
+  ): Cliente!
   updateCliente(
       id: ID!,
       nome: String!, 
       cpf: String!
-  ): Cliente!,
+  ): Cliente!
   deleteCliente(
     id: ID!
   ): ID!
@@ -33,7 +33,14 @@ type Mutation{
     tipo: String,
     observacoes: String
   ): Pet!
-
+  updatePet(
+    id: ID!
+    nome: String!,
+    donoId: Int!,
+    tipo: String,
+    observacoes: String
+  ): Pet!
+  deletePet(id: ID!): ID!
 }
 
 type Query{
@@ -41,4 +48,5 @@ type Query{
   clientes: [Cliente!]!,
   cliente(id: ID!): Cliente!,
   pets: [Pet!]!
+  pet(id: ID!): Pet!
 }
