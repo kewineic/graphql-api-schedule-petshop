@@ -1,10 +1,35 @@
-const executaQuery = require('../database/queries')
+const executaQuery = require('../database/queries');
+const { atendimento } = require('.');
 
 class Atendimento {
   lista() {
-    const sql = 'SELECT * FROM Atendimentos'
-
-    return executaQuery(sql)
+    const sql = 'SELECT Atendimentos.id, Atendimentos.data, Atendimentos.status, Atendimentos.observacoes, Pets.id as petId, Pets.nome as petNome, Pets.tipo as petTipo, Pets.observacoes as petObservacoes, Clientes.id as clienteId, Clientes.nome as clienteNome, Clientes.cpf as clienteCpf, Servicos.id as servicoId, Servicos.nome as servicoNome, Servicos.preco as servicoPreco, Servicos.descricao as servicoDescricao FROM Atendimentos INNER JOIN Clientes INNER JOIN Pets INNER JOIN Servicos WHERE Atendimentos.clienteId = Clientes.id AND Atendimentos.petId = Pets.id AND Atendimentos.servicoId = Servicos.id'
+  
+    return executaQuery(sql).then(atendimentos => {
+      return atendimentos.map(atendimento => ({
+        id: atendimento.id,
+        data: atendimento.data,
+        status: atendimento.status,
+        observacoes: atendimento.observacoes,
+        cliente: {
+          id: atendimento.clienteId,
+          nome: atendimento.clienteNome,
+          cpf: atendimento.clienteCpf
+        },
+        pet: {
+          id: atendimento.petId,
+          nome: atendimento.petNome,
+          tipo: atendimento.petTipo,
+          observacoes: atendimento.petObservacoes
+        },
+        servico: {
+          id: atendimento.servicoId,
+          nome: atendimento.servicoNome,
+          preco: atendimento.servicoPreco,
+          descricao: atendimento.servicoDescricao
+        }
+      }));
+    });
   }
 
   buscaPorId(res, id) {
@@ -41,7 +66,7 @@ class Atendimento {
       const cliente = res[1][0];
       const pet = res[2][0];
       const servico = res[3][0];
-      
+
       return ({
         id: dados.insertId,
         cliente,
